@@ -43,6 +43,7 @@ export default function App() {
 
 - 함수로 작성
 - return으로 JSX 요소나 `null` 반환 (⚠️ `undefined` 반환 불가!)
+- ⚠️ 같은 부모를 가지고 있어야 형제 컴포넌트! 같은 레벨이지만 다른 부모를 가지고 있다면 형제 컴포넌트가 아님
   <br/>
 
 ## React.Fragment
