@@ -1,3 +1,16 @@
+import GuestView from "./components/GuestView";
+import UserInfo from "./components/UserInfo";
+import UserView from "./components/UserView";
+
 export default function App() {
-  return <></>;
+  const isLoggedIn = true;
+  const components = isLoggedIn ? (
+    <>
+      <UserView />
+      <UserInfo />
+    </>
+  ) : (
+    <GuestView />
+  );
+  return <>{components}</>;
 }
