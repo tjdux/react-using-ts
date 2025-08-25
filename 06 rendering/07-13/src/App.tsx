@@ -22,6 +22,13 @@ export default function App() {
           </li>
         ))}
       </ul>
+      <ul>
+        {fruits.map((fruit) => (
+          <li key={fruit.id}>
+            <input type="text" placeholder={fruit.value} />
+          </li>
+        ))}
+      </ul>
       <button onClick={handleAddFruit}>추가</button>
     </>
   );
