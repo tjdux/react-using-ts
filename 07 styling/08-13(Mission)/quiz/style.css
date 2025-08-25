@@ -1,0 +1,96 @@
+.traffic-light {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #333;
+  width: 120px;
+  height: 320px;
+  border-radius: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  padding: 20px 0;
+}
+
+.traffic-light__light {
+  width: 80px;
+  height: 80px;
+  background-color: grey;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+/* 개별 색상 정의 */
+.traffic-light__light--red {
+  background-color: gray;
+}
+.traffic-light__light--yellow {
+  background-color: gray;
+}
+.traffic-light__light--green {
+  background-color: gray;
+}
+
+/* 호버 효과 */
+.traffic-light__light--red:hover {
+  animation: blink1 1.1s step-end infinite;
+}
+.traffic-light__light--yellow:hover {
+  animation: blink2 1s step-end infinite;
+}
+.traffic-light__light--green:hover {
+  animation: blink3 1s step-end infinite;
+}
+
+/* 클릭(활성화) 효과 */
+.traffic-light__light[aria-pressed="true"] {
+  box-shadow: 0 0 6em rgba(255, 255, 255, 0.5);
+}
+.traffic-light__light--red[aria-pressed="true"] {
+  background-color: #ff0000;
+  box-shadow: 0 0 6em #ff3333;
+}
+.traffic-light__light--yellow[aria-pressed="true"] {
+  background-color: #ffff00;
+  box-shadow: 0 0 6em #ffff33;
+}
+.traffic-light__light--green[aria-pressed="true"] {
+  background-color: #00ff00;
+  box-shadow: 0 0 6em #33ff33;
+}
+
+/* 깜빡이는 효과 */
+@keyframes blink1 {
+  0% {
+    background-color: #ff0000;
+    box-shadow: 0 0 6em #ff3333;
+  }
+  50% {
+    background-color: #b30000;
+    box-shadow: 0 0 0em transparent;
+  }
+}
+@keyframes blink2 {
+  0% {
+    background-color: #ffff00;
+    box-shadow: 0 0 6em #ffff33;
+  }
+  50% {
+    background-color: #b2b300;
+    box-shadow: 0 0 0em transparent;
+  }
+}
+@keyframes blink3 {
+  0% {
+    background-color: #00ff00;
+    box-shadow: 0 0 6em #33ff33;
+  }
+  50% {
+    background-color: #00b300;
+    box-shadow: 0 0 0em transparent;
+  }
+}
