@@ -17,6 +17,9 @@ const Title = styled.h1<{ $color: string; $decoration: string }>`
   color: ${(props) => props.$color};
   text-decoration: ${(props) => props.$decoration};
   animation: ${fadeIn} 2s ease-in;
+  &:hover {
+    color: pink;
+  }
 `;
 
 const BigTitle = styled(Title)`
@@ -37,7 +40,13 @@ export default function App() {
   return (
     <>
       <BlueBorderWrapper $shadow>
-        <Title $color="#0000ff" $decoration="underline" as="p">
+        <Title
+          $color="#0000ff"
+          $decoration="underline"
+          as="p"
+          title="hello!"
+          onClick={() => alert("hello")}
+        >
           Hello, ReactJS!
         </Title>
         <BigTitle $color="#0000ff" $decoration="underline">

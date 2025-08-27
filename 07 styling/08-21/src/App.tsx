@@ -1,18 +1,17 @@
-import { twMerge } from "tailwind-merge";
+import sample from "./assets/images/sample.jpg";
+
 export default function App() {
-  const isRed = false;
   return (
     <>
-      <div className="flex flex-col items-center justify-center min-h-screen space-y-4">
-        <button
-          className={twMerge(
-            `bg-green-500 text-white py-3 px-5 rounded border-none cursor-pointer transition-colors duration-300  hover:bg-green-600`,
-            isRed && "bg-rose-500"
-          )}
-        >
-          Click Me
-        </button>
-      </div>
+      <div className="bg"></div>
+      <div className="bg-1"></div>
+      <div className="bg-[url(https://cdn.pixabay.com/photo/2023/12/06/14/39/snow-8433815_1280.jpg)] w-[400px] h-[400px]"></div>
+      <div className="bg-[url(/sample.jpg)] h-[400px] w-[400px]"></div>
+      {/* <div className={`bg-[url(${sample})] h-[400px] w-[400px]`}></div> */}
+      <div
+        className="h-[300px] w-[400px]"
+        style={{ backgroundImage: `url(${sample})` }}
+      ></div>
     </>
   );
 }

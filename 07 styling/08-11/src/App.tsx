@@ -20,7 +20,7 @@ const Title = styled.h1<{ $color: string; $decoration: string }>`
 `;
 
 const BigTitle = styled(Title)`
-  font-size: 50px;
+  font-size: ${(props) => props.theme.fontSize.margin};
 `;
 
 const Wrapper = styled.section`
@@ -29,7 +29,7 @@ const Wrapper = styled.section`
 `;
 
 const BlueBorderWrapper = styled(Wrapper)<{ $shadow: boolean }>`
-  border-color: blue;
+  border-color: ${(props) => props.theme.colors.primary};
   ${(props) => props.$shadow && boxShadowMixin}
 `;
 

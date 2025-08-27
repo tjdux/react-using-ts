@@ -1,8 +1,18 @@
-import styled from "styled-components";
+import styled, { keyframes } from "styled-components";
+
+const fadeIn = keyframes`
+  from{
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+  }
+`;
 
 const Title = styled.h1<{ $color: string; $decoration: string }>`
   color: ${(props) => props.$color};
   text-decoration: ${(props) => props.$decoration};
+  animation: ${fadeIn} 2s ease-in;
 `;
 
 const BigTitle = styled(Title)`
@@ -22,7 +32,7 @@ export default function App() {
   return (
     <>
       <BlueBorderWrapper>
-        <Title $color="#0000ff" $decoration="underline">
+        <Title $color="#0000ff" $decoration="underline" as="h2">
           Hello, ReactJS!
         </Title>
         <BigTitle $color="#0000ff" $decoration="underline">

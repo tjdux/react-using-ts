@@ -1,1 +1,10 @@
 @import "tailwindcss";
+
+@layer components {
+  input {
+    @apply border-2 border-solid border-[#333] cursor-pointer text-lg bg-[white] hover:shadow-[1px_1px_2px_#333] appearance-none;
+  }
+  .operator {
+    @apply bg-[orange];
+  }
+}

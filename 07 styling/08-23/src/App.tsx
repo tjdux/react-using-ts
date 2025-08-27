@@ -1,7 +1,7 @@
 export default function App() {
   return (
     <>
-      <h1>App Component</h1>
+      <h1 className="nanum-pen-script-regular">App Component</h1>
     </>
   );
 }

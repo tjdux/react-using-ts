@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+/* .btns {
+  @apply bg-green-500 text-white py-3 px-5 border-none cursor-pointer transition-colors duration-300 hover:bg-green-600 rounded;
+} */
+
+@layer components {
+  .btns {
+    @apply bg-green-500 text-white py-3 px-5 border-none cursor-pointer transition-colors duration-300 hover:bg-green-600 rounded;
+  }
+}

@@ -6,12 +6,12 @@ import { ThemeProvider } from "styled-components";
 
 const theme = {
   colors: {
-    primary: "#007bff",
-    secondary: "#6c757d",
+    primary: "red",
+    secondary: "gray",
   },
   fontSize: {
     normal: "16px",
-    large: "20px",
+    margin: "20px",
   },
 };
 

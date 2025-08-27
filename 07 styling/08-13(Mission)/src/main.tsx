@@ -6,8 +6,7 @@ import { ThemeProvider } from "styled-components";
 
 const theme = {
   colors: {
-    primary: "red",
-    secondary: "gray",
+    lightBackgroundColor: "grey",
   },
   fontSize: {
     normal: "16px",

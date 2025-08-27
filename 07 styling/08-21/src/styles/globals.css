@@ -1,12 +1,13 @@
-.button {
-  background-color: oklch(0.723 0.219 149.579);
-  color: white;
-  padding: 12px 20px;
-  border-radius: 0.25rem;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+/* public 폴더 */
+.bg {
+  background-image: url("/sample.jpg");
+  width: 400px;
+  height: 400px;
 }
-.button:hover {
-  background-color: oklch(0.627 0.194 149.214);
+
+/* src/assets */
+.bg-1 {
+  background-image: url("../assets/images/sample.jpg");
+  width: 400px;
+  height: 400px;
 }
