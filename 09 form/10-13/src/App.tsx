@@ -19,18 +19,23 @@ export default function App() {
           placeholder="email"
           value={email}
           onChange={handleEmailChange}
+          required
         />
         <input
           type="password"
           placeholder="password"
           value={password}
           onChange={handlePasswordChange}
+          minLength={4}
+          maxLength={10}
+          required
         />
         <input
           type="text"
           placeholder="name"
           value={name}
           onChange={handleNameChange}
+          required
         />
         <button type="submit">제출</button>
       </form>

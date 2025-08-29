@@ -1,8 +1,31 @@
+import { useRef } from "react";
+
 export default function UserInfoForm() {
+  const formRef = useRef<HTMLFormElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (formRef.current) {
+      const formData = new FormData(formRef.current);
+      const name = formData.get("name");
+      const email = formData.get("email");
+      const gender = formData.get("gender");
+      const skills = formData.getAll("skills");
+      const bio = formData.get("bio");
+
+      if (name === "") {
+        alert("이름을 입력해주세요.");
+        nameRef.current?.focus();
+      }
+
+      console.log({ name, email, gender, skills, bio });
+    }
+  };
+
   return (
     <div className="user-info">
       <h1 className="user-info__title">User Information</h1>
-      <form className="user-info__form">
+      <form className="user-info__form" ref={formRef} onSubmit={handleSubmit}>
         <div className="form-group">
           <label className="form-group__label" htmlFor="name">
             이름:
@@ -12,6 +35,7 @@ export default function UserInfoForm() {
             type="text"
             id="name"
             name="name"
+            ref={nameRef}
           />
         </div>
 

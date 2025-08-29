@@ -1,4 +1,9 @@
 import useInput from "./hooks/useInput";
+import {
+  validateEmail,
+  validatePassword,
+  validateName,
+} from "./utils/validation";
 
 export default function App() {
   const { value: email, handleValueChange: handleEmailChange } = useInput("");
@@ -8,6 +13,23 @@ export default function App() {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const emailError = validateEmail(email);
+    const pwError = validatePassword(password);
+    const nameError = validateName(name);
+
+    if (emailError) {
+      alert(emailError);
+      return;
+    }
+    if (pwError) {
+      alert(pwError);
+      return;
+    }
+    if (nameError) {
+      alert(nameError);
+      return;
+    }
     console.log({ email, password, name });
   };
 

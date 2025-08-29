@@ -1,20 +1,10 @@
-import { useState } from "react";
+import useInput from "./hooks/useInput";
 
 export default function App() {
-  const [email, setEmail] = useState("");
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmail(e.target.value);
-  };
-
-  const [password, setPassword] = useState("");
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
-
-  const [name, setName] = useState("");
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
-  };
+  const { value: email, handleValueChange: handleEmailChange } = useInput("");
+  const { value: password, handleValueChange: handlePasswordChange } =
+    useInput("");
+  const { value: name, handleValueChange: handleNameChange } = useInput("");
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

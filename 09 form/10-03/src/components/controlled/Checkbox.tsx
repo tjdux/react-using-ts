@@ -5,12 +5,14 @@ export default function Checkbox() {
     chk1: false,
     chk2: false,
   });
+
   const handleFormStateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormState((formState) => ({
       ...formState,
       [e.target.name]: e.target.checked,
     }));
   };
+
   return (
     <div>
       <div>
