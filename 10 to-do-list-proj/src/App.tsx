@@ -1,16 +1,52 @@
+import { useState } from "react";
 import TodoEditor from "./components/TodoEditor";
 import TodoHeader from "./components/TodoHeader";
 import TodoList from "./components/TodoList";
 
 export default function App() {
+  const [todos, setTodos] = useState<Todo[]>([]);
+  const addTodo = (text: string) => {
+    setTodos((todos) => [
+      ...todos,
+      {
+        id: Date.now(),
+        text,
+        completed: false,
+      },
+    ]);
+  };
+
+  const toggleTodo = (id: number) => {
+    setTodos((todos) =>
+      todos.map((todo) =>
+        todo.id === id ? { ...todo, completed: !todo.completed } : todo
+      )
+    );
+  };
+
+  const deleteTodo = (id: number) => {
+    setTodos((todos) => todos.filter((todo) => todo.id !== id));
+  };
+
+  const modifyTodo = (id: number, text: string) => {
+    setTodos((todos) =>
+      todos.map((todo) => (todo.id === id ? { ...todo, text } : todo))
+    );
+  };
+
   return (
     <>
       <div className="todo">
         <TodoHeader />
         {/* 할 일 등록 */}
-        <TodoEditor />
+        <TodoEditor addTodo={addTodo} />
         {/* 할 일 목록 */}
-        <TodoList />
+        <TodoList
+          todos={todos}
+          toggleTodo={toggleTodo}
+          deleteTodo={deleteTodo}
+          modifyTodo={modifyTodo}
+        />
       </div>
     </>
   );
