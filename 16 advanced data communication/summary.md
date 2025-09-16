@@ -108,3 +108,4 @@ export default function ChildComponent({
 ## tip
 
 - 로딩이 0.5초보다 적으면 로딩 화면을 안 보여주는 것이 더 좋은 ui일 수 있음
+- `use`, `Suspense`, `Error Boundary`는 무한 스크롤 구현 불가능: 정적인 데이터 fetch에 적합
