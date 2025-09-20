@@ -1,7 +1,10 @@
 import { Mail } from "lucide-react";
+import { useNavigate } from "react-router";
 
 export default function Login() {
-  // 카카오 로그인 요청
+  const navigate = useNavigate();
+
+  // 카카오 로그인 요청 (도메인이 다른 곳으로 이동하는 것이기 때문에 navigate 사용 안 함)
   const handleKakaoLogin = () => {
     window.location.href = "http://localhost:4000/auth/kakao";
   };
@@ -63,7 +66,11 @@ export default function Login() {
             </div>
 
             {/* 회원가입 버튼 */}
-            <button className="w-full flex items-center justify-center gap-2 bg-slate-700 text-white py-3 rounded-lg hover:bg-slate-600 transition-colors font-medium">
+            <button
+              className="w-full flex items-center justify-center gap-2 bg-slate-700 text-white py-3 rounded-lg hover:bg-slate-600 transition-colors font-medium"
+              // 일반 회원 가입 페이지로 이동 (같은 라우트에서 이동)
+              onClick={() => navigate("/auth/signup")}
+            >
               Create an account
             </button>
           </div>
