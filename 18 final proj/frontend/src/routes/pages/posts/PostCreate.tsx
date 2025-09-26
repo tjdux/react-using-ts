@@ -1,8 +1,11 @@
-import { ImagePlus } from "lucide-react";
-import { useState } from "react";
+import { ImagePlus, Loader2 } from "lucide-react";
+import { useState, useTransition } from "react";
 import { useNavigate } from "react-router";
+import axios from "axios";
+import { axiosInstance } from "../../../api/axios";
 
 const categories = [
+  "",
   "Technology",
   "Lifestyle",
   "Travel",
@@ -10,11 +13,22 @@ const categories = [
   "Economy",
   "Sports",
 ];
+
+type FormStateType = {
+  title: string;
+  category: string;
+  thumbnail: string;
+  content: string;
+};
+
+// 파일 최대 크기 10MB
+const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
 export default function PostCreate() {
   const navigate = useNavigate();
 
   // 폼 데이터 상태
-  const [formState, setFormState] = useState({
+  const [formState, setFormState] = useState<FormStateType>({
     title: "",
     category: "",
     thumbnail: "",
@@ -22,12 +36,16 @@ export default function PostCreate() {
   });
 
   // 에러 상태
-  const [errorState, setErrorState] = useState({
+  const [errorState, setErrorState] = useState<FormStateType>({
     title: "",
     category: "",
     thumbnail: "",
     content: "",
   });
+
+  // 이미지 미리보기
+  const [previewImage, setPreviewImage] = useState("");
+  const [isPending, startTransition] = useTransition();
 
   // 상태 변경
   const handleFormStateChange = (
@@ -45,9 +63,88 @@ export default function PostCreate() {
     }));
   };
 
+  // 이미지 업로드
+  const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (!selectedFile) return;
+
+    // 파일 확장자 유효성 검사
+    const allowedExtensions = ["png", "webp", "jpeg", "jpg"];
+    const fileExtension = selectedFile.name.split(".").pop()?.toLowerCase(); // 확장자 가져오기
+    if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+      alert(`허용된 이미지 확장자는 ${allowedExtensions.join(", ")} 입니다.`);
+      e.target.value = "";
+      return;
+    }
+
+    // 파일 용량 유효성 검사
+    if (selectedFile.size > MAX_FILE_SIZE) {
+      alert("이미지 용량은 10MB 이하로 해주세요.");
+      e.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    // readeAsDataURL이 종료되고 onloadend 호출
+    reader.onloadend = () => {
+      setErrorState((errorState) => ({ ...errorState, ["thumbnail"]: "" }));
+      // 이미지 미리보기 설정
+      setPreviewImage(reader.result as string);
+    };
+    // 해당 파일 객체를 이해 가능한 문자열로 변경
+    reader.readAsDataURL(selectedFile);
+  };
+
   // 폼 제출
   const handleFormSubmit = () => {
     console.log(formState);
+    startTransition(async () => {
+      try {
+        // 폼 유효성 검사
+        const newErrors: FormStateType = {} as FormStateType;
+        if (!formState.title.trim()) newErrors.title = "Please enter a title";
+        if (!formState.category.trim())
+          newErrors.category = "Please select a category";
+        if (!previewImage) newErrors.thumbnail = "Please upload a thumbnail";
+        if (!formState.content.trim())
+          newErrors.content = "Please enter the content";
+
+        if (Object.keys(newErrors).length > 0) {
+          setErrorState(newErrors);
+          return;
+        }
+
+        let thumbnail = "";
+
+        if (previewImage) {
+          const formData = new FormData();
+          formData.append("file", previewImage);
+          formData.append("upload_preset", "react_blog");
+
+          const {
+            data: { url },
+          } = await axios.post(
+            "https://api.cloudinary.com/v1_1/dujhgftfp/image/upload",
+            formData
+          );
+          thumbnail = url;
+        }
+
+        const { status } = await axiosInstance.post("/posts", {
+          title: formState.title,
+          category: formState.category,
+          thumbnail: thumbnail,
+          content: formState.content,
+        });
+
+        if (status === 201) {
+          alert("post added!");
+          navigate("/");
+        }
+      } catch (e) {
+        console.error(e instanceof Error ? e.message : "unknown error");
+      }
+    });
   };
 
   return (
@@ -71,6 +168,9 @@ export default function PostCreate() {
             onChange={(e) => handleFormStateChange(e)}
             name="title"
           />
+          {errorState?.title && (
+            <p className="text-rose-500">{errorState.title}</p>
+          )}
         </div>
 
         <div>
@@ -89,10 +189,13 @@ export default function PostCreate() {
           >
             {categories.map((category) => (
               <option key={category} value={category}>
-                {category}
+                {category === "" ? "Select a Category" : category}
               </option>
             ))}
           </select>
+          {errorState?.title && (
+            <p className="text-rose-500">{errorState.category}</p>
+          )}
         </div>
 
         <div>
@@ -100,43 +203,49 @@ export default function PostCreate() {
             Featured Image
           </label>
           <div className="relative">
-            {/* 이미지 선택 후 화면 (미리보기) */}
-            {/* <div className="relative w-full aspect-video mb-4">
-              <img
-                src={
-                  "https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1"
-                }
-                alt="Preview"
-                className="w-full h-full object-cover rounded-lg"
-              />
-              <button
-                type="button"
-                className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
-              >
-                ✕
-              </button>
-            </div> */}
-            {/* 이미지 선택 전 화면 */}
-            <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center">
-              <input
-                type="file"
-                id="image"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => handleFormStateChange(e)}
-                name="thumbnail"
-              />
-              <label
-                htmlFor="image"
-                className="flex flex-col items-center cursor-pointer"
-              >
-                <ImagePlus className="h-12 w-12 text-gray-400 mb-3" />
-                <span className="text-gray-300">Click to upload image</span>
-                <span className="text-gray-500 text-sm mt-1">
-                  PNG, JPG up to 10MB
-                </span>
-              </label>
-            </div>
+            {/* 이미지 미리보기가 설정되어 있다면 ? 미리보기 이미지 : 이미지 input */}
+            {previewImage ? (
+              <div className="relative w-full aspect-video mb-4">
+                <img
+                  src={previewImage}
+                  alt="Preview"
+                  className="w-full h-full object-cover rounded-lg"
+                />
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 bg-red-500 text-white p-1 rounded-full hover:bg-red-600 transition-colors"
+                  onClick={() => {
+                    setPreviewImage("");
+                  }}
+                >
+                  ✕
+                </button>
+              </div>
+            ) : (
+              <div className="border-2 border-dashed border-gray-600 rounded-lg p-8 text-center">
+                <input
+                  type="file"
+                  id="image"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={(e) => handleChangeImage(e)}
+                  name="thumbnail"
+                />
+                <label
+                  htmlFor="image"
+                  className="flex flex-col items-center cursor-pointer"
+                >
+                  <ImagePlus className="h-12 w-12 text-gray-400 mb-3" />
+                  <span className="text-gray-300">Click to upload image</span>
+                  <span className="text-gray-500 text-sm mt-1">
+                    PNG, JPG up to 10MB
+                  </span>
+                </label>
+              </div>
+            )}
+            {errorState?.thumbnail && (
+              <p className="text-rose-500">{errorState.thumbnail}</p>
+            )}
           </div>
         </div>
 
@@ -155,14 +264,22 @@ export default function PostCreate() {
             onChange={(e) => handleFormStateChange(e)}
             name="content"
           />
+          {errorState?.content && (
+            <p className="text-rose-500">{errorState.content}</p>
+          )}
         </div>
 
         <div className="flex gap-4">
           <button
             type="submit"
-            className="px-6 py-2.5 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-6 py-2.5 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600 transition-colors disabled:bg-gray-400"
+            disabled={isPending}
           >
-            Publish Post
+            {isPending ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              "Publish Post"
+            )}
           </button>
           <button
             type="button"
