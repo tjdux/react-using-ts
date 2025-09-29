@@ -7,6 +7,7 @@ import CommentComponent from "../../../components/comment/CommentComponent";
 import { useLoaderData, useNavigate } from "react-router";
 import { format } from "date-fns";
 import { useAuthStore } from "../../../store/authStore";
+import { axiosInstance } from "../../../api/axios";
 
 export default function PostRead() {
   const { post, relatedPosts }: { post: Post; relatedPosts: Post[] } =
@@ -27,6 +28,16 @@ export default function PostRead() {
       </div>
     );
   }
+
+  // 게시물 삭제
+  const deletePost = async () => {
+    try {
+      await axiosInstance.delete(`/posts/${post._id}`);
+      navigate("/");
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "unknown error");
+    }
+  };
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
@@ -111,7 +122,7 @@ export default function PostRead() {
                   Cancel
                 </button>
                 <button
-                  onClick={() => setShowDeleteConfirm(false)}
+                  onClick={deletePost}
                   className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
                 >
                   Delete
