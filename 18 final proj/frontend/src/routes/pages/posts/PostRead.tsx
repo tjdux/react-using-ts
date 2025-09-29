@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useOptimistic, useState } from "react";
 import { CalendarDays, Trash2, Pencil, Eye } from "lucide-react";
 import AdBanner from "../../../components/common/AdBanner";
 import PostGrid from "../../../components/post/PostGrid";
@@ -14,6 +14,11 @@ export default function PostRead() {
     useLoaderData();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const navigate = useNavigate();
+  const [comments, setComments] = useState(post.comments);
+  const [optimisticComments, addOptimisticComments] = useOptimistic<
+    Comment[],
+    Comment
+  >(comments, (comment, value) => [...comment, value]);
 
   const user = useAuthStore((state) => state.user);
 
@@ -34,6 +39,18 @@ export default function PostRead() {
     try {
       await axiosInstance.delete(`/posts/${post._id}`);
       navigate("/");
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "unknown error");
+    }
+  };
+
+  // 댓글 삭제
+  const deleteComment = async (commentId: string) => {
+    try {
+      await axiosInstance.delete(`/posts/${post._id}/comments/${commentId}`);
+      setComments((comments) =>
+        comments.filter((comment) => comment._id !== commentId)
+      );
     } catch (e) {
       alert(e instanceof Error ? e.message : "unknown error");
     }
@@ -136,10 +153,20 @@ export default function PostRead() {
         <div className="border-t border-slate-700 pt-8 mt-8">
           <h2 className="text-2xl font-bold text-white mb-8">Comments</h2>
 
-          <CommentForm />
+          <CommentForm
+            addOptimisticComments={addOptimisticComments}
+            setComments={setComments}
+          />
 
           <div className="mt-8 space-y-6">
-            <CommentComponent />
+            {optimisticComments &&
+              optimisticComments.map((comment) => (
+                <CommentComponent
+                  key={comment._id}
+                  {...comment}
+                  deleteComment={deleteComment}
+                />
+              ))}
           </div>
         </div>
 

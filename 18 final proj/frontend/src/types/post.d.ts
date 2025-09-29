@@ -11,7 +11,14 @@ interface Post {
   thumbnail: string;
   content: string;
   author: Author;
-  comments: string[];
+  comments: Comment[];
   viewCount: number;
+  createdAt: string;
+}
+
+interface Comment {
+  author: Author;
+  content: string;
+  _id: string;
   createdAt: string;
 }
