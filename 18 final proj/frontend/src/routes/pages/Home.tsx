@@ -7,8 +7,8 @@ export default function Home() {
   const {
     randomPost,
     popularPosts,
-    latestPost,
-  }: { randomPost: Post; popularPosts: Post[]; latestPost: Post[] } =
+    latestPosts,
+  }: { randomPost: Post; popularPosts: Post[]; latestPosts: Post[] } =
     useLoaderData();
 
   return (
@@ -19,7 +19,7 @@ export default function Home() {
         <AdBanner />
       </div>
 
-      <PostGrid title="Latest Post" posts={latestPost} />
+      <PostGrid title="Latest Post" posts={latestPosts} />
 
       <div className="mt-8">
         <AdBanner />
