@@ -1,6 +1,6 @@
 import { ImagePlus, Loader2 } from "lucide-react";
-import { useState, useTransition } from "react";
-import { useNavigate } from "react-router";
+import { useEffect, useState, useTransition } from "react";
+import { useLoaderData, useNavigate } from "react-router";
 import axios from "axios";
 import { axiosInstance } from "../../../api/axios";
 
@@ -26,6 +26,9 @@ const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
 export default function PostCreate() {
   const navigate = useNavigate();
+
+  // 수정할 데이터
+  const post: Post = useLoaderData();
 
   // 폼 데이터 상태
   const [formState, setFormState] = useState<FormStateType>({
@@ -96,8 +99,9 @@ export default function PostCreate() {
   };
 
   // 폼 제출
-  const handleFormSubmit = () => {
-    console.log(formState);
+  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     startTransition(async () => {
       try {
         // 폼 유효성 검사
@@ -114,9 +118,9 @@ export default function PostCreate() {
           return;
         }
 
-        let thumbnail = "";
+        let thumbnail = post?.thumbnail || "";
 
-        if (previewImage) {
+        if (previewImage !== thumbnail) {
           const formData = new FormData();
           formData.append("file", previewImage);
           formData.append("upload_preset", "react_blog");
@@ -130,16 +134,30 @@ export default function PostCreate() {
           thumbnail = url;
         }
 
-        const { status } = await axiosInstance.post("/posts", {
-          title: formState.title,
-          category: formState.category,
-          thumbnail: thumbnail,
-          content: formState.content,
-        });
+        if (post) {
+          const { status } = await axiosInstance.put(`/posts/${post._id}`, {
+            title: formState.title,
+            category: formState.category,
+            thumbnail: thumbnail,
+            content: formState.content,
+          });
 
-        if (status === 201) {
-          alert("post added!");
-          navigate("/");
+          if (status === 200) {
+            alert("post updated!");
+            navigate(`/post/${post._id}`);
+          }
+        } else {
+          const { status } = await axiosInstance.post("/posts", {
+            title: formState.title,
+            category: formState.category,
+            thumbnail: thumbnail,
+            content: formState.content,
+          });
+
+          if (status === 201) {
+            alert("post added!");
+            navigate("/");
+          }
         }
       } catch (e) {
         console.error(e instanceof Error ? e.message : "unknown error");
@@ -147,11 +165,26 @@ export default function PostCreate() {
     });
   };
 
+  // 수정할 포스트 데이터 가져오기
+  useEffect(() => {
+    if (post) {
+      setFormState({
+        title: post.title,
+        category: post.category,
+        thumbnail: post.thumbnail,
+        content: post.content,
+      });
+      setPreviewImage(post.thumbnail);
+    }
+  }, [post]);
+
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
-      <h1 className="text-3xl font-bold text-white mb-8">Write New Post</h1>
+      <h1 className="text-3xl font-bold text-white mb-8">
+        {post ? "Modify Post" : "Write a New Post"}
+      </h1>
 
-      <form className="space-y-6" action={handleFormSubmit}>
+      <form className="space-y-6" onSubmit={handleFormSubmit}>
         <div>
           <label
             htmlFor="title"
@@ -167,6 +200,7 @@ export default function PostCreate() {
             required
             onChange={(e) => handleFormStateChange(e)}
             name="title"
+            value={formState.title}
           />
           {errorState?.title && (
             <p className="text-rose-500">{errorState.title}</p>
@@ -186,6 +220,7 @@ export default function PostCreate() {
             required
             onChange={(e) => handleFormStateChange(e)}
             name="category"
+            value={formState.category}
           >
             {categories.map((category) => (
               <option key={category} value={category}>
@@ -263,6 +298,7 @@ export default function PostCreate() {
             required
             onChange={(e) => handleFormStateChange(e)}
             name="content"
+            value={formState.content}
           />
           {errorState?.content && (
             <p className="text-rose-500">{errorState.content}</p>
@@ -277,6 +313,8 @@ export default function PostCreate() {
           >
             {isPending ? (
               <Loader2 className="w-4 h-4 animate-spin" />
+            ) : post ? (
+              "Modify Post"
             ) : (
               "Publish Post"
             )}

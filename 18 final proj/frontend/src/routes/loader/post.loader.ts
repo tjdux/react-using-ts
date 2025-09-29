@@ -1,5 +1,6 @@
 import { LoaderFunctionArgs } from "react-router";
 import { axiosInstance } from "../../api/axios";
+import { requireAuth } from "./auth.loader";
 
 // 메인 페이지 데이터
 export const fetchOverview = async () => {
@@ -22,5 +23,17 @@ export const fetchPostDetail = async ({ params }: LoaderFunctionArgs) => {
   } catch {
     return { post: null, relatedPosts: null };
     //console.error(e);
+  }
+};
+
+// 포스트 수정
+export const fetchPostModify = async ({ params }: LoaderFunctionArgs) => {
+  try {
+    const auth = requireAuth();
+    if (auth) return auth;
+    const { data } = await axiosInstance.get(`/posts/${params.id}`);
+    return data;
+  } catch (e) {
+    console.error(e);
   }
 };
