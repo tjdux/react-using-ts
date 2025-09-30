@@ -20,6 +20,7 @@ import {
   fetchOverview,
   fetchPostDetail,
   fetchPostModify,
+  fetchPosts,
 } from "./loader/post.loader";
 
 const router = createBrowserRouter([
@@ -37,6 +38,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/posts",
+        loader: fetchPosts,
         Component: Posts,
       },
       {

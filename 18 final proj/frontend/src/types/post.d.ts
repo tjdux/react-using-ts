@@ -22,3 +22,10 @@ interface Comment {
   _id: string;
   createdAt: string;
 }
+
+interface Pagination {
+  totalCount: number;
+  currentPage: number;
+  perPage: number;
+  maxPage: number;
+}
