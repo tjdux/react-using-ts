@@ -180,6 +180,7 @@ export default function PostCreate() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 md:px-8 py-8">
+      <title>{post ? "Modify a Post - SULOG" : "Create a Post - SULOG"}</title>
       <h1 className="text-3xl font-bold text-white mb-8">
         {post ? "Modify Post" : "Write a New Post"}
       </h1>

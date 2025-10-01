@@ -18,3 +18,29 @@ axiosInstance.interceptors.request.use(
   },
   (error) => Promise.reject(error)
 );
+
+let retry = false;
+// 응답에 대한 인터셉터
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    // access token 재발급
+    if (error.response && error.response.status === 401 && !retry) {
+      retry = true;
+      try {
+        // refresh token으로 새로운 access token 재발급
+        const res = await axiosInstance.post("/auth/refresh");
+        if (!res.data.accessToken) throw new Error("Access token is missing");
+        retry = false;
+        sessionStorage.setItem("access_token", res.data.accessToken);
+        return axiosInstance(originalRequest);
+      } catch (refreshError) {
+        // access token 재발급 실패
+        sessionStorage.removeItem("access_token");
+        await axiosInstance.post("/auth/logout");
+        return Promise.reject(refreshError);
+      }
+    }
+  }
+);

@@ -37,6 +37,7 @@ export default function Posts() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 md:px-8 py-8">
+      <title>Posts List - SULOG</title>
       {/* Header: Title + Filter */}
       <div className="flex flex-col md:flex-row justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4 md:mb-0">
@@ -88,19 +89,26 @@ export default function Posts() {
       </div>
 
       {/* Post List - 정적 PostCard 예시 3개 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {posts && posts.map((post) => <PostCard key={post._id} {...post} />)}
-      </div>
+      {posts && posts.length > 0 && (
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {posts &&
+              posts.map((post) => <PostCard key={post._id} {...post} />)}
+          </div>
 
-      {/* Pagination */}
-      {pagination.maxPage > 1 && (
-        <Pagination
-          pageRange={5}
-          currentPage={page}
-          maxPage={pagination.maxPage}
-          onPageChange={(page: number) => handlePageChange(page)}
-        />
+          {/* Pagination */}
+          {pagination.maxPage > 1 && (
+            <Pagination
+              pageRange={5}
+              currentPage={page}
+              maxPage={pagination.maxPage}
+              onPageChange={(page: number) => handlePageChange(page)}
+            />
+          )}
+        </>
       )}
+
+      {posts && posts.length === 0 && <PostZero selectedCategory={category} />}
 
       {/* Ad Banner */}
       <div className="mt-12">
